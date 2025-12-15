@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DTU Connect</title>
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Custom Tailwind config
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "system-ui", "sans-serif"],
+            },
+            colors: {
+              "dtu-blue": {
+                DEFAULT: "#3b82f6", // blue-500
+                dark: "#2563eb", // blue-600
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* Simple loading spinner */
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3b82f6;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      /* Comment Modal Styles */
+      #comment-modal {
+        transition: opacity 0.3s ease;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans antialiased">
+    <!-- Header -->
+    <header
+      class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200"
+    >
+      <div class="container mx-auto max-w-7xl px-4">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo and Title -->
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+              <span
+                class="w-10 h-10 bg-dtu-blue rounded-lg flex items-center justify-center text-white text-xl font-bold"
+                >D</span
+              >
+            </div>
+            <div>
+              <h1 class="text-xl font-bold text-gray-900">DTU Connect</h1>
+              <p class="text-xs text-gray-500">Campus Hub</p>
+            </div>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="hidden md:block w-full max-w-lg">
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="h-5 w-5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <input
+                type="text"
+                class="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-dtu-blue"
+                placeholder="Search posts, people..."
+              />
+            </div>
+          </div>
+
+          <!-- Icons -->
+          <div class="flex items-center space-x-4">
+            <button
+              class="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 relative"
+            >
+              <svg
+                class="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+              <span class="absolute top-1 right-1 h-3 w-3">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"
+                ></span>
+                <span
+                  class="relative inline-flex rounded-full h-2 w-2 bg-red-500"
+                ></span>
+              </span>
+            </button>
+            <button
+              class="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+            >
+              <svg
+                class="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto max-w-7xl p-4 mt-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column: Post Form -->
+        <div class="lg:col-span-1 w-full">
+          <div class="bg-white p-6 rounded-lg shadow-sm sticky top-24">
+            <h2 class="text-xl font-semibold mb-5">Create Post</h2>
+            <form id="post-form">
+              <!-- Author -->
+              <div class="mb-4">
+                <label
+                  for="author"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Your Name</label
+                >
+                <input
+                  type="text"
+                  id="author"
+                  name="author"
+                  class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-dtu-blue"
+                  placeholder="e.g., Rohan Sharma"
+                  required
+                />
+              </div>
+
+              <!-- Content -->
+              <div class="mb-4">
+                <label
+                  for="content"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >What's on your mind?</label
+                >
+                <textarea
+                  id="content"
+                  name="content"
+                  rows="4"
+                  class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-dtu-blue"
+                  placeholder="Found a lost ID, need help with OOP, etc."
+                  required
+                ></textarea>
+              </div>
+
+              <!-- Post Type -->
+              <div class="mb-5">
+                <label
+                  for="type"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Post Type</label
+                >
+                <select
+                  id="type"
+                  name="type"
+                  class="w-full p-3 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-dtu-blue"
+                >
+                  <option value="general">General</option>
+                  <option value="lost">Lost Item</option>
+                  <option value="found">Found Item</option>
+                  <option value="help">Need Help</option>
+                  <option value="events">Events</option>
+                  <option value="academic">Academic</option>
+                </select>
+              </div>
+
+              <!-- Add Image Button (Visual only) -->
+              <button
+                type="button"
+                class="w-full bg-gray-50 border-2 border-dashed border-gray-300 text-gray-600 font-semibold py-3 px-4 rounded-lg shadow-sm hover:bg-gray-100 transition duration-300 flex items-center justify-center space-x-2 mb-5"
+              >
+                <svg
+                  class="h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1.586-1.586a2 2 0 00-2.828 0L6 14m6-6l.25.25m-6.25 6.25l6 6L20 12M4 4h16v16H4V4z"
+                  />
+                </svg>
+                <span>Add Image</span>
+              </button>
+
+              <!-- Submit Button -->
+              <button
+                type="submit"
+                id="submit-button"
+                class="w-full bg-dtu-blue text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-dtu-blue-dark transition duration-300 flex items-center justify-center space-x-2"
+              >
+                <svg
+                  class="h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  />
+                </svg>
+                <span>Post</span>
+              </button>
+              <!-- Form Error Message -->
+              <p id="form-error" class="text-red-500 text-sm mt-3 hidden"></p>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right Column: Post Feed -->
+        <div class="lg:col-span-2 w-full">
+          <h2 class="text-2xl font-semibold mb-4 text-gray-900">Campus Feed</h2>
+          <!-- Loading Spinner -->
+          <div id="feed-loader" class="flex justify-center p-10">
+            <div class="loader"></div>
+          </div>
+          <!-- Feed Container -->
+          <div id="post-feed" class="space-y-6">
+            <!-- Posts will be injected here by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Post Card Template (Hidden) -->
+    <template id="post-template">
+      <div
+        class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 post-card"
+      >
+        <!-- Post Header -->
+        <div class="flex items-start justify-between">
+          <div class="flex items-center space-x-3">
+            <!-- Avatar -->
+            <span
+              class="avatar-circle w-11 h-11 rounded-full flex items-center justify-center text-xl font-medium text-white"
+            ></span>
+            <!-- Author and Timestamp -->
+            <div>
+              <h3 class="text-md font-semibold text-gray-900 post-author"></h3>
+              <p class="text-sm text-gray-500 post-timestamp"></p>
+            </div>
+          </div>
+          <!-- Badge and Menu -->
+          <div class="flex items-center space-x-2">
+            <!-- Badge will be inserted here -->
+            <button class="p-1 rounded-full text-gray-400 hover:bg-gray-100">
+              <svg
+                class="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <p class="text-gray-700 whitespace-pre-wrap my-4 post-content"></p>
+
+        <!-- Post Actions (Like, Comment, Share) -->
+        <hr class="border-gray-200" />
+        <div class="flex justify-around items-center pt-3 text-gray-600">
+          <!-- Like Button -->
+          <button
+            class="like-button flex items-center space-x-2 hover:text-red-500 hover:bg-red-50 rounded-lg p-2"
+          >
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
+              />
+            </svg>
+            <span class="text-sm font-medium post-likes">0</span>
+          </button>
+          <!-- Comment Button -->
+          <button
+            class="comment-button flex items-center space-x-2 hover:text-blue-500 hover:bg-blue-50 rounded-lg p-2"
+          >
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.939L3 21l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+            <span class="text-sm font-medium post-comments">0</span>
+          </button>
+          <!-- Share Button -->
+          <button
+            class="flex items-center space-x-2 hover:text-green-500 hover:bg-green-50 rounded-lg p-2"
+          >
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.364 3.672a3 3 0 000-6.348l-6.364-3.672m6.364 12.684a3 3 0 100-2.684m0 2.684a3 3 0 000-2.684m0 2.684l-6.364-3.672a3 3 0 010-2.684"
+              />
+            </svg>
+            <span class="text-sm font-medium">Share</span>
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <!-- Comment Card Template (Hidden, for Modal) -->
+    <template id="comment-template">
+      <div class="bg-gray-100 p-3 rounded-lg">
+        <div class="flex justify-between items-center">
+          <span
+            class="font-semibold text-sm text-gray-800 comment-author"
+          ></span>
+          <span class="text-xs text-gray-500 comment-timestamp"></span>
+        </div>
+        <p
+          class="text-sm text-gray-700 mt-1 whitespace-pre-wrap comment-content"
+        ></p>
+      </div>
+    </template>
+
+    <!-- --- Comment Modal --- -->
+    <div
+      id="comment-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
+      style="background-color: rgba(0, 0, 0, 0.5)"
+    >
+      <div
+        class="bg-white w-full max-w-lg rounded-lg shadow-xl overflow-hidden"
+      >
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center border-b p-4">
+          <h3 class="text-lg font-semibold">Comments</h3>
+          <button
+            id="modal-close-button"
+            class="text-gray-400 hover:text-gray-600"
+          >
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal Body (Comment List) -->
+        <div
+          id="modal-comment-list"
+          class="p-4 space-y-3 max-h-60 overflow-y-auto"
+        >
+          <!-- Comments will be injected here -->
+        </div>
+
+        <!-- Modal Footer (Comment Form) -->
+        <div class="bg-gray-50 p-4 border-t">
+          <form id="modal-comment-form">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Add a comment</label
+            >
+            <input
+              type="text"
+              name="author"
+              class="w-full p-2 border border-gray-300 rounded-lg shadow-sm mb-2"
+              placeholder="Your Name"
+              required
+            />
+            <textarea
+              name="content"
+              rows="2"
+              class="w-full p-2 border border-gray-300 rounded-lg shadow-sm mb-2"
+              placeholder="Write your comment..."
+              required
+            ></textarea>
+            <button
+              type="submit"
+              class="bg-dtu-blue text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-dtu-blue-dark transition duration-300 text-sm"
+            >
+              Add Comment
+            </button>
+            <p class="modal-comment-error text-red-500 text-sm mt-1 hidden"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- Global Elements ---
+        const postForm = document.getElementById("post-form");
+        const submitButton = document.getElementById("submit-button");
+        const postFeed = document.getElementById("post-feed");
+        const feedLoader = document.getElementById("feed-loader");
+        const postTemplate = document.getElementById("post-template");
+        const formError = document.getElementById("form-error");
+
+        // --- Modal Elements ---
+        const commentModal = document.getElementById("comment-modal");
+        const modalCloseButton = document.getElementById("modal-close-button");
+        const modalCommentList = document.getElementById("modal-comment-list");
+        const modalCommentForm = document.getElementById("modal-comment-form");
+        const modalCommentTemplate =
+          document.getElementById("comment-template");
+        const modalErrorP = modalCommentForm.querySelector(
+          ".modal-comment-error"
+        );
+
+        // --- Helper: Avatar Colors ---
+        const avatarColors = [
+          "bg-red-500",
+          "bg-orange-500",
+          "bg-yellow-500",
+          "bg-green-500",
+          "bg-teal-500",
+          "bg-blue-500",
+          "bg-indigo-500",
+          "bg-purple-500",
+          "bg-pink-500",
+        ];
+
+        function getAvatarColor(name) {
+          // Simple hash function
+          let hash = 0;
+          for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          return avatarColors[Math.abs(hash) % avatarColors.length];
+        }
+
+        // --- Helper: Render a single comment ---
+        function renderComment(comment, listElement, prepend = false) {
+          const commentElement = modalCommentTemplate.content.cloneNode(true);
+          commentElement.querySelector(".comment-author").textContent =
+            comment.author;
+          commentElement.querySelector(".comment-timestamp").textContent =
+            comment.timestamp;
+          commentElement.querySelector(".comment-content").textContent =
+            comment.content;
+
+          if (prepend) {
+            listElement.prepend(commentElement);
+          } else {
+            listElement.appendChild(commentElement);
+          }
+        }
+
+        // --- Helper: Render a single post ---
+        function renderPost(post, prepend = false) {
+          const postElement = postTemplate.content.cloneNode(true);
+          const postCard = postElement.querySelector(".post-card");
+
+          // Set post ID on the card for later reference
+          postCard.dataset.postId = post.id;
+          // --- Store the full post data on the element ---
+          postCard.dataset.postData = JSON.stringify(post);
+
+          // --- Avatar ---
+          const author = post.author || "Anonymous";
+          const initial = author.charAt(0).toUpperCase();
+          const avatar = postElement.querySelector(".avatar-circle");
+          avatar.textContent = initial;
+          avatar.classList.add(getAvatarColor(author));
+
+          // --- Badge ---
+          const badge = createBadge(post.type);
+          postElement
+            .querySelector(".flex.items-center.space-x-2")
+            .prepend(badge);
+
+          // --- Text Content ---
+          postElement.querySelector(".post-author").textContent = author;
+          postElement.querySelector(".post-timestamp").textContent =
+            post.timestamp;
+          postElement.querySelector(".post-content").textContent = post.content;
+
+          // --- Actions ---
+          const likeButton = postElement.querySelector(".like-button");
+          const likeCountSpan = postElement.querySelector(".post-likes");
+          const commentButton = postElement.querySelector(".comment-button");
+          const commentCountSpan = postElement.querySelector(".post-comments");
+
+          likeCountSpan.textContent = post.likes;
+          commentCountSpan.textContent =
+            post.comments && post.comments.length ? post.comments.length : "0";
+
+          // --- Attach listeners for like and comment ---
+          likeButton.addEventListener("click", () =>
+            handleLikeClick(postCard, likeButton, likeCountSpan)
+          );
+          commentButton.addEventListener("click", () =>
+            handleCommentClick(postCard)
+          );
+
+          if (prepend) {
+            postFeed.prepend(postElement);
+          } else {
+            postFeed.appendChild(postElement);
+          }
+        }
+
+        // --- Helper: Create colored badge for post type ---
+        function createBadge(type) {
+          const badge = document.createElement("span");
+          badge.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full";
+          let text = type.charAt(0).toUpperCase() + type.slice(1);
+
+          switch (type) {
+            case "lost":
+            case "found":
+              badge.classList.add("bg-orange-100", "text-orange-800");
+              text = "Lost & Found";
+              break;
+            case "events":
+              badge.classList.add("bg-green-100", "text-green-800");
+              text = "Events";
+              break;
+            case "academic":
+              badge.classList.add("bg-blue-100", "text-blue-800");
+              text = "Academic";
+              break;
+            case "help":
+              badge.classList.add("bg-yellow-100", "text-yellow-800");
+              text = "Help";
+              break;
+            case "general":
+            default:
+              badge.classList.add("bg-gray-100", "text-gray-800");
+              text = "General";
+              break;
+          }
+          badge.textContent = text;
+          return badge;
+        }
+
+        // --- Helper: Show/Hide Form Error ---
+        function showFormError(message) {
+          formError.textContent = message;
+          formError.classList.remove("hidden");
+        }
+        function hideFormError() {
+          formError.classList.add("hidden");
+        }
+
+        // --- API: Fetch all posts ---
+        async function fetchPosts() {
+          feedLoader.classList.remove("hidden");
+          postFeed.innerHTML = ""; // Clear feed
+          try {
+            const response = await fetch("/api/posts");
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const posts = await response.json();
+
+            if (posts.length === 0) {
+              postFeed.innerHTML =
+                '<p id="no-posts-msg" class="text-gray-500 text-center">No posts yet. Be the first!</p>';
+            } else {
+              posts.forEach((post) => renderPost(post));
+            }
+          } catch (error) {
+            console.error("Error fetching posts:", error);
+            postFeed.innerHTML =
+              '<p class="text-red-500 text-center">Could not load posts. Please try again later.</p>';
+          } finally {
+            feedLoader.classList.add("hidden");
+          }
+        }
+
+        // --- API: Submit a new post ---
+        async function submitPost(e) {
+          e.preventDefault();
+          hideFormError();
+
+          const postData = {
+            author: postForm.author.value.trim(),
+            content: postForm.content.value.trim(),
+            type: postForm.type.value,
+          };
+
+          // Basic validation
+          if (!postData.author || !postData.content) {
+            showFormError("Name and content fields cannot be empty.");
+            return;
+          }
+
+          // Disable button
+          submitButton.disabled = true;
+          submitButton.innerHTML =
+            '<div class="loader !w-6 !h-6 !border-2 !border-t-dtu-blue"></div>';
+
+          try {
+            const response = await fetch("/api/posts", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(postData),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.detail || "Failed to create post");
+            }
+
+            const newPost = await response.json();
+
+            const noPostsMsg = document.getElementById("no-posts-msg");
+            if (noPostsMsg) noPostsMsg.remove();
+
+            renderPost(newPost, true); // Add new post to top of feed
+            postForm.reset();
+          } catch (error) {
+            console.error("Error submitting post:", error);
+            showFormError(error.message);
+          } finally {
+            // Re-enable button
+            submitButton.disabled = false;
+            submitButton.innerHTML = `
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                        <span>Post</span>`;
+          }
+        }
+
+        // --- API: Handle Like Click ---
+        async function handleLikeClick(postCard, button, countSpan) {
+          // Prevent double-clicking
+          if (button.disabled) return;
+
+          const postId = postCard.dataset.postId;
+          button.disabled = true;
+
+          // --- NEW: Toggle logic ---
+          const isLiked = button.classList.contains("text-red-500");
+          const endpoint = isLiked ? "unlike" : "like";
+
+          try {
+            const response = await fetch(`/api/posts/${postId}/${endpoint}`, {
+              method: "POST",
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to ${endpoint} post`);
+            }
+
+            const updatedPost = await response.json();
+
+            // Update UI
+            countSpan.textContent = updatedPost.likes;
+
+            // --- NEW: Toggle the class ---
+            if (isLiked) {
+              button.classList.remove("text-red-500"); // Unlike
+            } else {
+              button.classList.add("text-red-500"); // Like
+            }
+
+            // Update the stored data
+            const postData = JSON.parse(postCard.dataset.postData);
+            postData.likes = updatedPost.likes;
+            postCard.dataset.postData = JSON.stringify(postData);
+          } catch (error) {
+            console.error("Error liking post:", error);
+          } finally {
+            button.disabled = false; // Re-enable button
+          }
+        }
+
+        // --- Modal: Open/Close ---
+        function handleCommentClick(postCard) {
+          // Get data from the postCard
+          const postData = JSON.parse(postCard.dataset.postData);
+          const postId = postData.id;
+          const comments = postData.comments;
+
+          // Set the post ID on the form
+          modalCommentForm.dataset.postId = postId;
+
+          // Clear old comments
+          modalCommentList.innerHTML = "";
+
+          // Populate comments
+          if (comments && comments.length > 0) {
+            comments.forEach((comment) => {
+              renderComment(comment, modalCommentList);
+            });
+          } else {
+            modalCommentList.innerHTML =
+              '<p class="text-gray-500 text-sm text-center">No comments yet.</p>';
+          }
+
+          // Show modal
+          commentModal.classList.remove("hidden");
+          commentModal.classList.add("flex");
+        }
+
+        function closeModal() {
+          commentModal.classList.add("hidden");
+          commentModal.classList.remove("flex");
+          modalCommentForm.reset();
+          modalErrorP.classList.add("hidden");
+        }
+
+        modalCloseButton.addEventListener("click", closeModal);
+
+        // --- API: Submit Comment from Modal ---
+        modalCommentForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const postId = modalCommentForm.dataset.postId;
+          if (!postId) return;
+
+          const author = modalCommentForm.author.value.trim();
+          const content = modalCommentForm.content.value.trim();
+          const submitBtn = modalCommentForm.querySelector(
+            'button[type="submit"]'
+          );
+
+          if (!author || !content) {
+            modalErrorP.textContent = "Name and content cannot be empty.";
+            modalErrorP.classList.remove("hidden");
+            return;
+          }
+          modalErrorP.classList.add("hidden");
+
+          const originalBtnText = submitBtn.innerHTML;
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = "Posting...";
+
+          try {
+            const response = await fetch(`/api/posts/${postId}/comments`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ author, content }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to add comment");
+            }
+
+            const newComment = await response.json();
+
+            // If "No comments" message is showing, remove it
+            if (modalCommentList.querySelector("p")) {
+              modalCommentList.innerHTML = "";
+            }
+
+            // Add new comment to modal list
+            renderComment(newComment, modalCommentList, true);
+            modalCommentForm.reset();
+
+            // --- IMPORTANT: Update the count on the main post card ---
+            const postCard = document.querySelector(
+              `.post-card[data-post-id="${postId}"]`
+            );
+            if (postCard) {
+              // --- Update the stored postData on the card ---
+              const postData = JSON.parse(postCard.dataset.postData);
+              postData.comments.push(newComment);
+              postCard.dataset.postData = JSON.stringify(postData);
+
+              // Update the count from the new data
+              const commentCountSpan = postCard.querySelector(".post-comments");
+              commentCountSpan.textContent = postData.comments.length;
+            }
+          } catch (error) {
+            console.error("Error submitting comment:", error);
+            modalErrorP.textContent = error.message;
+            modalErrorP.classList.remove("hidden");
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+          }
+        });
+
+        // --- Event Listeners ---
+        postForm.addEventListener("submit", submitPost);
+
+        // --- Initial Load ---
+        fetchPosts();
+      });
+    </script>
+  </body>
+</html>
+K

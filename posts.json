@@ -1,0 +1,79 @@
+[
+    {
+        "author": "Krrish",
+        "comments": [
+            {
+                "author": "Krrish",
+                "content": "lv",
+                "timestamp": "2025-11-08 14:11:19"
+            },
+            {
+                "author": "mic mic",
+                "content": "mic mic",
+                "timestamp": "2025-11-08 14:12:01"
+            }
+        ],
+        "content": "1",
+        "id": 5,
+        "likes": 1,
+        "timestamp": "2025-11-08 13:54:55",
+        "type": "general"
+    },
+    {
+        "author": "Krrish",
+        "comments": [],
+        "content": "1",
+        "id": 4,
+        "likes": 0,
+        "timestamp": "2025-11-08 13:54:51",
+        "type": "general"
+    },
+    {
+        "author": "Krrish",
+        "comments": [],
+        "content": "1",
+        "id": 3,
+        "likes": 0,
+        "timestamp": "2025-11-08 13:54:42",
+        "type": "general"
+    },
+    {
+        "author": "Krrish",
+        "comments": [
+            {
+                "author": "Krrish",
+                "content": "1",
+                "timestamp": "2025-11-08 13:54:24"
+            }
+        ],
+        "content": "hii",
+        "id": 1,
+        "likes": 1,
+        "timestamp": "2025-11-08 13:48:52",
+        "type": "general"
+    },
+    {
+        "author": "Krrish",
+        "comments": [],
+        "content": "aff",
+        "id": 2,
+        "likes": 1,
+        "timestamp": "2025-11-08 13:51:50",
+        "type": "general"
+    },
+    {
+        "author": "BFUJ",
+        "comments": [
+            {
+                "author": "asa",
+                "content": "123",
+                "timestamp": "2025-11-08 14:16:15"
+            }
+        ],
+        "content": "ABA",
+        "id": 6,
+        "likes": 1,
+        "timestamp": "2025-11-08 14:05:45",
+        "type": "general"
+    }
+]
