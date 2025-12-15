@@ -1,79 +1,32 @@
 [
     {
-        "author": "Krrish",
+        "author": "Arham Jawed",
         "comments": [
             {
                 "author": "Krrish",
-                "content": "lv",
-                "timestamp": "2025-11-08 14:11:19"
+                "content": "i am Great!",
+                "timestamp": "2025-12-15 23:46:55"
             },
             {
-                "author": "mic mic",
-                "content": "mic mic",
-                "timestamp": "2025-11-08 14:12:01"
+                "author": "arham",
+                "content": "how is it going",
+                "timestamp": "2025-12-15 23:47:38"
             }
         ],
-        "content": "1",
-        "id": 5,
-        "likes": 1,
-        "timestamp": "2025-11-08 13:54:55",
-        "type": "general"
-    },
-    {
-        "author": "Krrish",
-        "comments": [],
-        "content": "1",
-        "id": 4,
-        "likes": 0,
-        "timestamp": "2025-11-08 13:54:51",
-        "type": "general"
-    },
-    {
-        "author": "Krrish",
-        "comments": [],
-        "content": "1",
-        "id": 3,
-        "likes": 0,
-        "timestamp": "2025-11-08 13:54:42",
-        "type": "general"
-    },
-    {
-        "author": "Krrish",
-        "comments": [
-            {
-                "author": "Krrish",
-                "content": "1",
-                "timestamp": "2025-11-08 13:54:24"
-            }
-        ],
-        "content": "hii",
-        "id": 1,
-        "likes": 1,
-        "timestamp": "2025-11-08 13:48:52",
-        "type": "general"
-    },
-    {
-        "author": "Krrish",
-        "comments": [],
-        "content": "aff",
+        "content": "Hello guys how are you?",
         "id": 2,
         "likes": 1,
-        "timestamp": "2025-11-08 13:51:50",
+        "timestamp": "2025-12-15 23:46:26",
         "type": "general"
     },
     {
-        "author": "BFUJ",
-        "comments": [
-            {
-                "author": "asa",
-                "content": "123",
-                "timestamp": "2025-11-08 14:16:15"
-            }
-        ],
-        "content": "ABA",
-        "id": 6,
+        "author": "Krrish",
+        "comments": [],
+        "content": "ID card lost",
+        "id": 1,
+        "itemStatus": "lost",
         "likes": 1,
-        "timestamp": "2025-11-08 14:05:45",
-        "type": "general"
+        "timestamp": "2025-12-15 23:45:45",
+        "type": "lost"
     }
 ]

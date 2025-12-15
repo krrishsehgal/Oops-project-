@@ -1,28 +1,23 @@
-#define _WIN32_WINNT 0x0A00    // Fixes Windows 8 compile error
-#define HTTPLIB_IMPLEMENTATION // Tells httplib to include its .cpp code
-#include "httplib.h"           // MUST be included after the defines
+#define _WIN32_WINNT 0x0A00    
+#define HTTPLIB_IMPLEMENTATION 
+#include "httplib.h"           
 
-// Include other libraries AFTER httplib.h
 #include <iostream>
 #include <string>
 #include <vector>
-#include <memory> // For std::unique_ptr
+#include <memory>
 #include <fstream>
 #include <sstream>
 #include <chrono>
 #include <iomanip>
-#include "json.hpp" // Include the JSON library
+#include "json.hpp" 
 
-// For convenience
 using json = nlohmann::json;
 using namespace httplib;
 
-// --- Database file ---
 const std::string DB_FILE = "posts.json";
 
-// ===================================================================
-// OOP MODEL
-// ===================================================================
+
 
 /**
  * @class Comment
@@ -35,7 +30,6 @@ public:
     std::string content;
     std::string timestamp;
 
-    // Constructor for new comments
     Comment(const std::string &author, const std::string &content)
         : author(author), content(content)
     {
@@ -46,7 +40,6 @@ public:
         timestamp = ss.str();
     }
 
-    // Constructor for loading comments from JSON
     Comment(const std::string &author, const std::string &content, const std::string &timestamp)
         : author(author), content(content), timestamp(timestamp) {}
 
@@ -63,9 +56,6 @@ public:
  * @class Post (Base Class)
  * @brief Represents a single post on the platform.
  *
- * This class demonstrates Encapsulation by bundling data (id, author, etc.)
- * with methods to operate on that data. It also serves as the base class
- * for different post types, setting up for Polymorphism.
  */
 class Post
 {
@@ -75,10 +65,9 @@ protected:
     std::string content;
     std::string timestamp;
     int likes;
-    std::vector<Comment> comments; // Holds all comments for this post
+    std::vector<Comment> comments; 
 
 public:
-    // Constructor
     Post(long long id, const std::string &author, const std::string &content)
         : id(id), author(author), content(content), likes(0)
     {
@@ -90,11 +79,9 @@ public:
         timestamp = ss.str();
     }
 
-    // Virtual destructor (important for base classes)
     virtual ~Post() {}
 
-    // --- Virtual Methods for Polymorphism ---
-    virtual std::string getType() const = 0; // Pure virtual
+    virtual std::string getType() const = 0; 
 
     virtual json toJson() const
     {
@@ -104,9 +91,8 @@ public:
         j["content"] = content;
         j["timestamp"] = timestamp;
         j["likes"] = likes;
-        j["type"] = getType(); // Calls the derived class's version
+        j["type"] = getType(); 
 
-        // Serialize comments
         json j_comments = json::array();
         for (const auto &comment : comments)
         {
@@ -117,7 +103,6 @@ public:
         return j;
     }
 
-    // --- Other Methods ---
     virtual Comment &addComment(const std::string &author, const std::string &content)
     {
         comments.emplace_back(author, content);
@@ -134,28 +119,24 @@ public:
         timestamp = ts;
     }
 
-    // --- Method to increment likes ---
     void incrementLikes()
     {
         likes++;
     }
 
-    // --- NEW: Method to decrement likes ---
     void decrementLikes()
     {
         if (likes > 0)
-        { // Don't go below zero
+        { 
             likes--;
         }
     }
 
-    // --- Method to set likes when loading from file ---
     void setLikes(int numLikes)
     {
         likes = numLikes;
     }
 
-    // --- Getters (Encapsulation) ---
     long long getId() const { return id; }
     std::string getAuthor() const { return author; }
     std::string getContent() const { return content; }
@@ -186,13 +167,12 @@ public:
 class LostAndFoundPost : public Post
 {
 private:
-    std::string itemStatus; // "lost" or "found"
+    std::string itemStatus; 
 
 public:
     LostAndFoundPost(long long id, const std::string &author, const std::string &content, const std::string &status)
         : Post(id, author, content), itemStatus(status) {}
 
-    // Return the specific status ("lost" or "found")
     std::string getType() const override
     {
         return itemStatus;
@@ -200,8 +180,8 @@ public:
 
     json toJson() const override
     {
-        json j = Post::toJson();      // Call base class method
-        j["itemStatus"] = itemStatus; // Add derived class data
+        json j = Post::toJson();      
+        j["itemStatus"] = itemStatus; 
         return j;
     }
 };
@@ -257,9 +237,6 @@ public:
     }
 };
 
-// ===================================================================
-// SERVICE CLASS (OOP COMPOSITION)
-// ===================================================================
 
 /**
  * @class PostService
@@ -274,7 +251,6 @@ private:
     std::vector<std::unique_ptr<Post>> posts;
     long long nextId = 1;
 
-    // Private helper to find max ID on load
     void updateNextId()
     {
         long long maxId = 0;
@@ -291,7 +267,7 @@ private:
 public:
     PostService()
     {
-        loadPosts(); // Load from disk on initialization
+        loadPosts(); 
     }
 
     /**
@@ -303,7 +279,6 @@ public:
         long long id = nextId++;
         std::unique_ptr<Post> newPost;
 
-        // Factory logic: create the correct object based on 'type'
         if (type == "lost")
         {
             newPost = std::make_unique<LostAndFoundPost>(id, author, content, "lost");
@@ -326,13 +301,12 @@ public:
         }
         else
         {
-            // Default to general post
             newPost = std::make_unique<GeneralPost>(id, author, content);
         }
 
         Post *newPostPtr = newPost.get();
         posts.push_back(std::move(newPost));
-        savePosts(); // Save to disk after adding
+        savePosts(); 
         return newPostPtr;
     }
 
@@ -346,11 +320,11 @@ public:
             if (post->getId() == postId)
             {
                 Comment &newComment = post->addComment(author, content);
-                savePosts(); // Save after adding comment
+                savePosts();
                 return &newComment;
             }
         }
-        return nullptr; // Post not found
+        return nullptr;
     }
 
     /**
@@ -363,7 +337,7 @@ public:
             if (post->getId() == postId)
             {
                 post->incrementLikes();
-                savePosts(); // Save after updating likes
+                savePosts(); 
                 return post.get();
             }
         }
@@ -409,7 +383,7 @@ public:
         std::ofstream f(DB_FILE);
         if (f.is_open())
         {
-            f << getAllPostsAsJson().dump(4); // pretty-print
+            f << getAllPostsAsJson().dump(4); 
             f.close();
             std::cout << "Saved " << posts.size() << " posts to " << DB_FILE << std::endl;
         }
@@ -453,9 +427,8 @@ public:
                 long long id = item.at("id");
                 std::string author = item.at("author");
                 std::string content = item.at("content");
-                std::string timestamp = item.at("timestamp"); // Get timestamp
+                std::string timestamp = item.at("timestamp"); 
 
-                // Load likes, default to 0 if not present
                 int likes = 0;
                 if (item.contains("likes"))
                 {
@@ -464,7 +437,6 @@ public:
 
                 std::unique_ptr<Post> newPost;
 
-                // Factory logic to reconstruct objects from JSON
                 if (type == "lost")
                 {
                     newPost = std::make_unique<LostAndFoundPost>(id, author, content, "lost");
@@ -487,16 +459,15 @@ public:
                 }
                 else
                 {
-                    // Default to general
+                    
                     newPost = std::make_unique<GeneralPost>(id, author, content);
                 }
 
                 if (newPost)
                 {
-                    newPost->setTimestamp(timestamp); // Set loaded timestamp
-                    newPost->setLikes(likes);         // Set loaded likes
+                    newPost->setTimestamp(timestamp); 
+                    newPost->setLikes(likes);         
 
-                    // Load comments
                     if (item.contains("comments") && item.at("comments").is_array())
                     {
                         for (const auto &c_item : item.at("comments"))
@@ -515,32 +486,26 @@ public:
                 std::cerr << "Error: Skipping malformed post in JSON. " << e.what() << std::endl;
             }
         }
-        updateNextId(); // Ensure new IDs are unique
+        updateNextId(); 
         std::cout << "Loaded " << posts.size() << " posts from " << DB_FILE << std::endl;
     }
 };
 
-// ===================================================================
-// MAIN SERVER LOGIC
-// ===================================================================
+
 
 int main()
 {
-    // Server instance
+    
     Server svr;
 
-    // --- Instantiate the Service ---
     PostService postService;
 
-    // --- API Endpoints ---
-
-    // 1. Get all posts
+   
     svr.Get("/api/posts", [&](const Request &req, Response &res)
             {
         json postsJson = postService.getAllPostsAsJson();
         res.set_content(postsJson.dump(), "application/json"); });
 
-    // 2. Create a new post
     svr.Post("/api/posts", [&](const Request &req, Response &res)
              {
         try {
@@ -565,7 +530,7 @@ int main()
             res.set_content(err.dump(), "application/json");
         } });
 
-    // 3. Add a comment to a post
+   
     svr.Post(R"(/api/posts/(\d+)/comments)", [&](const Request &req, Response &res)
              {
         long long postId = std::stoll(req.matches[1]);
@@ -595,7 +560,6 @@ int main()
             res.set_content(err.dump(), "application/json");
         } });
 
-    // 4. Like a post
     svr.Post(R"(/api/posts/(\d+)/like)", [&](const Request &req, Response &res)
              {
         long long postId = std::stoll(req.matches[1]);
@@ -610,7 +574,6 @@ int main()
             res.set_content(err.dump(), "application/json");
         } });
 
-    // 5. --- NEW: Unlike a post ---
     svr.Post(R"(/api/posts/(\d+)/unlike)", [&](const Request &req, Response &res)
              {
         long long postId = std::stoll(req.matches[1]);
@@ -625,7 +588,6 @@ int main()
             res.set_content(err.dump(), "application/json");
         } });
 
-    // --- Static File Serving ---
     auto ret = svr.set_base_dir("./www");
     if (!ret)
     {
@@ -634,7 +596,6 @@ int main()
         return 1;
     }
 
-    // --- Start Server ---
     std::cout << "DTU Connect server starting at http://localhost:8080\n";
     svr.listen("0.0.0.0", 8080);
 
