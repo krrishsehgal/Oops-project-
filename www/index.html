@@ -25,7 +25,6 @@
       };
     </script>
     <style>
-      /* Simple loading spinner */
       .loader {
         border: 4px solid #f3f3f3;
         border-top: 4px solid #3b82f6;
@@ -42,20 +41,18 @@
           transform: rotate(360deg);
         }
       }
-      /* Comment Modal Styles */
+
       #comment-modal {
         transition: opacity 0.3s ease;
       }
     </style>
   </head>
   <body class="bg-gray-100 font-sans antialiased">
-    <!-- Header -->
     <header
       class="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200"
     >
       <div class="container mx-auto max-w-7xl px-4">
         <div class="flex justify-between items-center h-16">
-          <!-- Logo and Title -->
           <div class="flex items-center space-x-3">
             <div class="flex-shrink-0">
               <span
@@ -69,7 +66,6 @@
             </div>
           </div>
 
-          <!-- Search Bar -->
           <div class="hidden md:block w-full max-w-lg">
             <div class="relative">
               <div
@@ -98,7 +94,6 @@
             </div>
           </div>
 
-          <!-- Icons -->
           <div class="flex items-center space-x-4">
             <button
               class="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 relative"
@@ -149,15 +144,12 @@
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="container mx-auto max-w-7xl p-4 mt-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column: Post Form -->
         <div class="lg:col-span-1 w-full">
           <div class="bg-white p-6 rounded-lg shadow-sm sticky top-24">
             <h2 class="text-xl font-semibold mb-5">Create Post</h2>
             <form id="post-form">
-              <!-- Author -->
               <div class="mb-4">
                 <label
                   for="author"
@@ -174,7 +166,6 @@
                 />
               </div>
 
-              <!-- Content -->
               <div class="mb-4">
                 <label
                   for="content"
@@ -191,7 +182,6 @@
                 ></textarea>
               </div>
 
-              <!-- Post Type -->
               <div class="mb-5">
                 <label
                   for="type"
@@ -212,7 +202,6 @@
                 </select>
               </div>
 
-              <!-- Add Image Button (Visual only) -->
               <button
                 type="button"
                 class="w-full bg-gray-50 border-2 border-dashed border-gray-300 text-gray-600 font-semibold py-3 px-4 rounded-lg shadow-sm hover:bg-gray-100 transition duration-300 flex items-center justify-center space-x-2 mb-5"
@@ -234,7 +223,6 @@
                 <span>Add Image</span>
               </button>
 
-              <!-- Submit Button -->
               <button
                 type="submit"
                 id="submit-button"
@@ -256,48 +244,36 @@
                 </svg>
                 <span>Post</span>
               </button>
-              <!-- Form Error Message -->
               <p id="form-error" class="text-red-500 text-sm mt-3 hidden"></p>
             </form>
           </div>
         </div>
 
-        <!-- Right Column: Post Feed -->
         <div class="lg:col-span-2 w-full">
           <h2 class="text-2xl font-semibold mb-4 text-gray-900">Campus Feed</h2>
-          <!-- Loading Spinner -->
           <div id="feed-loader" class="flex justify-center p-10">
             <div class="loader"></div>
           </div>
-          <!-- Feed Container -->
-          <div id="post-feed" class="space-y-6">
-            <!-- Posts will be injected here by JavaScript -->
-          </div>
+          <div id="post-feed" class="space-y-6"></div>
         </div>
       </div>
     </main>
 
-    <!-- Post Card Template (Hidden) -->
     <template id="post-template">
       <div
         class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 post-card"
       >
-        <!-- Post Header -->
         <div class="flex items-start justify-between">
           <div class="flex items-center space-x-3">
-            <!-- Avatar -->
             <span
               class="avatar-circle w-11 h-11 rounded-full flex items-center justify-center text-xl font-medium text-white"
             ></span>
-            <!-- Author and Timestamp -->
             <div>
               <h3 class="text-md font-semibold text-gray-900 post-author"></h3>
               <p class="text-sm text-gray-500 post-timestamp"></p>
             </div>
           </div>
-          <!-- Badge and Menu -->
           <div class="flex items-center space-x-2">
-            <!-- Badge will be inserted here -->
             <button class="p-1 rounded-full text-gray-400 hover:bg-gray-100">
               <svg
                 class="h-5 w-5"
@@ -317,13 +293,10 @@
           </div>
         </div>
 
-        <!-- Post Content -->
         <p class="text-gray-700 whitespace-pre-wrap my-4 post-content"></p>
 
-        <!-- Post Actions (Like, Comment, Share) -->
         <hr class="border-gray-200" />
         <div class="flex justify-around items-center pt-3 text-gray-600">
-          <!-- Like Button -->
           <button
             class="like-button flex items-center space-x-2 hover:text-red-500 hover:bg-red-50 rounded-lg p-2"
           >
@@ -343,7 +316,6 @@
             </svg>
             <span class="text-sm font-medium post-likes">0</span>
           </button>
-          <!-- Comment Button -->
           <button
             class="comment-button flex items-center space-x-2 hover:text-blue-500 hover:bg-blue-50 rounded-lg p-2"
           >
@@ -363,7 +335,6 @@
             </svg>
             <span class="text-sm font-medium post-comments">0</span>
           </button>
-          <!-- Share Button -->
           <button
             class="flex items-center space-x-2 hover:text-green-500 hover:bg-green-50 rounded-lg p-2"
           >
@@ -387,7 +358,6 @@
       </div>
     </template>
 
-    <!-- Comment Card Template (Hidden, for Modal) -->
     <template id="comment-template">
       <div class="bg-gray-100 p-3 rounded-lg">
         <div class="flex justify-between items-center">
@@ -402,7 +372,6 @@
       </div>
     </template>
 
-    <!-- --- Comment Modal --- -->
     <div
       id="comment-modal"
       class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -411,7 +380,6 @@
       <div
         class="bg-white w-full max-w-lg rounded-lg shadow-xl overflow-hidden"
       >
-        <!-- Modal Header -->
         <div class="flex justify-between items-center border-b p-4">
           <h3 class="text-lg font-semibold">Comments</h3>
           <button
@@ -435,15 +403,11 @@
           </button>
         </div>
 
-        <!-- Modal Body (Comment List) -->
         <div
           id="modal-comment-list"
           class="p-4 space-y-3 max-h-60 overflow-y-auto"
-        >
-          <!-- Comments will be injected here -->
-        </div>
+        ></div>
 
-        <!-- Modal Footer (Comment Form) -->
         <div class="bg-gray-50 p-4 border-t">
           <form id="modal-comment-form">
             <label class="block text-sm font-medium text-gray-700 mb-1"
@@ -477,7 +441,6 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        // --- Global Elements ---
         const postForm = document.getElementById("post-form");
         const submitButton = document.getElementById("submit-button");
         const postFeed = document.getElementById("post-feed");
@@ -485,7 +448,6 @@
         const postTemplate = document.getElementById("post-template");
         const formError = document.getElementById("form-error");
 
-        // --- Modal Elements ---
         const commentModal = document.getElementById("comment-modal");
         const modalCloseButton = document.getElementById("modal-close-button");
         const modalCommentList = document.getElementById("modal-comment-list");
@@ -496,7 +458,6 @@
           ".modal-comment-error"
         );
 
-        // --- Helper: Avatar Colors ---
         const avatarColors = [
           "bg-red-500",
           "bg-orange-500",
@@ -510,7 +471,6 @@
         ];
 
         function getAvatarColor(name) {
-          // Simple hash function
           let hash = 0;
           for (let i = 0; i < name.length; i++) {
             hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -518,7 +478,6 @@
           return avatarColors[Math.abs(hash) % avatarColors.length];
         }
 
-        // --- Helper: Render a single comment ---
         function renderComment(comment, listElement, prepend = false) {
           const commentElement = modalCommentTemplate.content.cloneNode(true);
           commentElement.querySelector(".comment-author").textContent =
@@ -535,36 +494,29 @@
           }
         }
 
-        // --- Helper: Render a single post ---
         function renderPost(post, prepend = false) {
           const postElement = postTemplate.content.cloneNode(true);
           const postCard = postElement.querySelector(".post-card");
 
-          // Set post ID on the card for later reference
           postCard.dataset.postId = post.id;
-          // --- Store the full post data on the element ---
           postCard.dataset.postData = JSON.stringify(post);
 
-          // --- Avatar ---
           const author = post.author || "Anonymous";
           const initial = author.charAt(0).toUpperCase();
           const avatar = postElement.querySelector(".avatar-circle");
           avatar.textContent = initial;
           avatar.classList.add(getAvatarColor(author));
 
-          // --- Badge ---
           const badge = createBadge(post.type);
           postElement
             .querySelector(".flex.items-center.space-x-2")
             .prepend(badge);
 
-          // --- Text Content ---
           postElement.querySelector(".post-author").textContent = author;
           postElement.querySelector(".post-timestamp").textContent =
             post.timestamp;
           postElement.querySelector(".post-content").textContent = post.content;
 
-          // --- Actions ---
           const likeButton = postElement.querySelector(".like-button");
           const likeCountSpan = postElement.querySelector(".post-likes");
           const commentButton = postElement.querySelector(".comment-button");
@@ -574,7 +526,6 @@
           commentCountSpan.textContent =
             post.comments && post.comments.length ? post.comments.length : "0";
 
-          // --- Attach listeners for like and comment ---
           likeButton.addEventListener("click", () =>
             handleLikeClick(postCard, likeButton, likeCountSpan)
           );
@@ -589,7 +540,6 @@
           }
         }
 
-        // --- Helper: Create colored badge for post type ---
         function createBadge(type) {
           const badge = document.createElement("span");
           badge.className = "text-xs font-semibold px-2.5 py-0.5 rounded-full";
@@ -623,7 +573,6 @@
           return badge;
         }
 
-        // --- Helper: Show/Hide Form Error ---
         function showFormError(message) {
           formError.textContent = message;
           formError.classList.remove("hidden");
@@ -632,10 +581,9 @@
           formError.classList.add("hidden");
         }
 
-        // --- API: Fetch all posts ---
         async function fetchPosts() {
           feedLoader.classList.remove("hidden");
-          postFeed.innerHTML = ""; // Clear feed
+          postFeed.innerHTML = "";
           try {
             const response = await fetch("/api/posts");
             if (!response.ok) {
@@ -658,7 +606,6 @@
           }
         }
 
-        // --- API: Submit a new post ---
         async function submitPost(e) {
           e.preventDefault();
           hideFormError();
@@ -669,13 +616,11 @@
             type: postForm.type.value,
           };
 
-          // Basic validation
           if (!postData.author || !postData.content) {
             showFormError("Name and content fields cannot be empty.");
             return;
           }
 
-          // Disable button
           submitButton.disabled = true;
           submitButton.innerHTML =
             '<div class="loader !w-6 !h-6 !border-2 !border-t-dtu-blue"></div>';
@@ -697,7 +642,7 @@
             const noPostsMsg = document.getElementById("no-posts-msg");
             if (noPostsMsg) noPostsMsg.remove();
 
-            renderPost(newPost, true); // Add new post to top of feed
+            renderPost(newPost, true);
             postForm.reset();
           } catch (error) {
             console.error("Error submitting post:", error);
@@ -713,15 +658,12 @@
           }
         }
 
-        // --- API: Handle Like Click ---
         async function handleLikeClick(postCard, button, countSpan) {
-          // Prevent double-clicking
           if (button.disabled) return;
 
           const postId = postCard.dataset.postId;
           button.disabled = true;
 
-          // --- NEW: Toggle logic ---
           const isLiked = button.classList.contains("text-red-500");
           const endpoint = isLiked ? "unlike" : "like";
 
@@ -736,41 +678,33 @@
 
             const updatedPost = await response.json();
 
-            // Update UI
             countSpan.textContent = updatedPost.likes;
 
-            // --- NEW: Toggle the class ---
             if (isLiked) {
-              button.classList.remove("text-red-500"); // Unlike
+              button.classList.remove("text-red-500");
             } else {
-              button.classList.add("text-red-500"); // Like
+              button.classList.add("text-red-500");
             }
 
-            // Update the stored data
             const postData = JSON.parse(postCard.dataset.postData);
             postData.likes = updatedPost.likes;
             postCard.dataset.postData = JSON.stringify(postData);
           } catch (error) {
             console.error("Error liking post:", error);
           } finally {
-            button.disabled = false; // Re-enable button
+            button.disabled = false;
           }
         }
 
-        // --- Modal: Open/Close ---
         function handleCommentClick(postCard) {
-          // Get data from the postCard
           const postData = JSON.parse(postCard.dataset.postData);
           const postId = postData.id;
           const comments = postData.comments;
 
-          // Set the post ID on the form
           modalCommentForm.dataset.postId = postId;
 
-          // Clear old comments
           modalCommentList.innerHTML = "";
 
-          // Populate comments
           if (comments && comments.length > 0) {
             comments.forEach((comment) => {
               renderComment(comment, modalCommentList);
@@ -780,7 +714,6 @@
               '<p class="text-gray-500 text-sm text-center">No comments yet.</p>';
           }
 
-          // Show modal
           commentModal.classList.remove("hidden");
           commentModal.classList.add("flex");
         }
@@ -794,7 +727,6 @@
 
         modalCloseButton.addEventListener("click", closeModal);
 
-        // --- API: Submit Comment from Modal ---
         modalCommentForm.addEventListener("submit", async (e) => {
           e.preventDefault();
           const postId = modalCommentForm.dataset.postId;
@@ -830,26 +762,21 @@
 
             const newComment = await response.json();
 
-            // If "No comments" message is showing, remove it
             if (modalCommentList.querySelector("p")) {
               modalCommentList.innerHTML = "";
             }
 
-            // Add new comment to modal list
             renderComment(newComment, modalCommentList, true);
             modalCommentForm.reset();
 
-            // --- IMPORTANT: Update the count on the main post card ---
             const postCard = document.querySelector(
               `.post-card[data-post-id="${postId}"]`
             );
             if (postCard) {
-              // --- Update the stored postData on the card ---
               const postData = JSON.parse(postCard.dataset.postData);
               postData.comments.push(newComment);
               postCard.dataset.postData = JSON.stringify(postData);
 
-              // Update the count from the new data
               const commentCountSpan = postCard.querySelector(".post-comments");
               commentCountSpan.textContent = postData.comments.length;
             }
@@ -863,10 +790,8 @@
           }
         });
 
-        // --- Event Listeners ---
         postForm.addEventListener("submit", submitPost);
 
-        // --- Initial Load ---
         fetchPosts();
       });
     </script>
